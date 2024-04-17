@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+   /* Default styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* Light gray background */
+}
+
+.container {
+    max-width: 80px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color:cadetblue; 
+}
+
+form {
+    background-color:rgb(170, 165, 165);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333; /* Dark gray text */
+}
+
+form select,
+form input[type="text"] {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd; /* Light gray border */
+    background-color: #f9f9f9; /* Light gray background */
+}
+
+form button {
+    background-color:#569211; /* iOS blue */
+    color:black; /* White text */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #3a6ea6; /* Darker blue on hover */
+}
+
+#stopwatch {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 50%;
+    border: #333;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333; /* Dark gray text */
+}
+
+.deleteButton {
+    background-color: #ff3b30; /* iOS red */
+    color: #ffffff; /* White text */
+    padding: 8px 12px;
+    border: 1;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background-color: #cc2e24; /* Darker red on hover */
+}
+
+/* Responsive styles */
+@media screen and (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    form select,
+    form input[type="text"] {
+        padding: 8px;
+    }
+
+    form button {
+        padding: 8px 15px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
+   </style>
+</head>
+<body> 
+    <h2>Task Manager</h2>
+    <form id="taskForm">
+      <label for="category"><b>Task:</b></label>
+       <select name="" id="category">
+          <option value="Meeting">-</option>
+          <option value="Work">Meeting</option>
+          <option value="Personal">Personal Break
+          </option>
+       </select>
+      <label for="task"><b>Description</b></label>
+      <select name="" id="task">
+          <option value="">-</option>
+          <option value="Client">Client Meeting</option>
+          <option value="Documentation"> Developement
+          </option>
+          <option value="Daily Scrum">Daily Scrum</option>     
+       </select>
+       <br>
+       <label for="filterBy"><b>Filter by Task:</b></label>
+       <select name="filterBy" id="filterBy">
+           <option value="">All</option>
+           <option value="Client Meeting">Client Meeting</option>
+           <option value="Documentation">Development</option>
+           <option value="Daily Scrum">Daily Scrum</option>
+           <option value="Mall Handler Module"></option>
+       </select>
+       <button type="button" onclick="filterTable()">Filter</button>
+      <button type="button" id="startButton" onclick="startTimer()">Start</button>
+      <button type="button" id="stopButton" onclick="stopTimer()" style="display:none;">Stop & Add</button>
+      <button type="button" onclick="resetTimer()">Reset</button>   
+    </form>
+    <h3>Stopwatch</h3>
+    <div id="stopwatch">00:00:00</div>
+    <h3>Task Table</h3>
+    <table id="taskTable">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>  </th>
+          <th>Description</th>
+           <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+<script>
+     let timerInterval;
+    let startTime;
+    let elapsedTime = 0;
+    function startTimer() {
+      startTime = Date.now() - elapsedTime;
+      timerInterval = setInterval(updateTimer, 1000);
+      document.getElementById("startButton").style.display = "none";
+      document.getElementById("stopButton").style.display = "inline";
+    }
+    function stopTimer() {
+      clearInterval(timerInterval);
+      updateTable();
+      document.getElementById("startButton").style.display = "inline";
+      document.getElementById("stopButton").style.display = "none";
+    }
+    function updateTable() {
+    const category = document.getElementById('category').value;
+    let task = document.getElementById('task').value; 
+    if (task === "Client") {
+        task = "Client Meeting"; 
+    }
+    const duration = document.getElementById('stopwatch').textContent;
+    const table = document.getElementById('taskTable').getElementsByTagName('tbody')[0];
+    const newRow = table.insertRow();
+    const cell1 = newRow.insertCell(0);
+    const cell2 = newRow.insertCell(1);
+    const cell3 = newRow.insertCell(2);
+    const cell4 = newRow.insertCell(3);
+    const cell5 = newRow.insertCell(4);
+    cell1.textContent = category;
+    cell3.textContent = task;
+    cell4.textContent = duration;
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.className = "deleteButton";
+    deleteButton.style.backgroundColor = "#d32f2f";
+    deleteButton.style.borderRadius = "10px";
+    deleteButton.addEventListener("click", function () {
+        const row = this.parentElement.parentElement;
+        row.parentNode.removeChild(row); 
+    });
+    cell5.appendChild(deleteButton); 
+}
+function filterTable() {
+    const filterBy = document.getElementById('filterBy').value.toLowerCase(); 
+    const rows = document.getElementById('taskTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const task = row.getElementsByTagName('td')[2].textContent.toLowerCase();
+        if (filterBy === '' || task === filterBy) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+}
+    function resetTimer() {
+      clearInterval(timerInterval);
+      elapsedTime = 0;
+      displayTime(elapsedTime);
+      document.getElementById("startButton").style.display = "inline";
+      document.getElementById("stopButton").style.display = "none";
+    }
+    function updateTimer() {
+      const currentTime = Date.now();
+      elapsedTime = currentTime - startTime;
+      displayTime(elapsedTime);
+    }
+    function displayTime(time) {
+      const hours = Math.floor(time / (1000 * 60 * 60));
+      const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((time % (1000 * 60)) / 1000);
+      const formattedTime = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      document.getElementById('stopwatch').textContent = formattedTime;
+    }
+    function pad(num) {
+      return num.toString().padStart(2, '0');
+    }
+  </script>
+</script>
+</body>
+</html>
